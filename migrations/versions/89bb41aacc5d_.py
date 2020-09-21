@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 4d9de9cecd25
+Revision ID: 89bb41aacc5d
 Revises: 
-Create Date: 2020-09-18 17:35:57.896664
+Create Date: 2020-09-20 18:53:17.418464
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4d9de9cecd25'
+revision = '89bb41aacc5d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,6 @@ def upgrade():
     op.create_table('state',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=20), nullable=True),
-    sa.Column('abbreviation', sa.String(length=2), nullable=True),
     sa.Column('cases_2_weeks_ago', sa.Integer(), nullable=True),
     sa.Column('total_cases', sa.Integer(), nullable=True),
     sa.Column('new_cases', sa.Integer(), nullable=True),
@@ -30,7 +29,7 @@ def upgrade():
     op.create_table('county',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('state_id', sa.Integer(), nullable=True),
-    sa.Column('name', sa.String(length=20), nullable=True),
+    sa.Column('name', sa.String(length=50), nullable=True),
     sa.Column('cases_2_weeks_ago', sa.Integer(), nullable=True),
     sa.Column('total_cases', sa.Integer(), nullable=True),
     sa.Column('new_cases', sa.Integer(), nullable=True),

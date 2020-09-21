@@ -2,17 +2,20 @@ from app import db
 from sqlalchemy import Table, Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
+
 class State(db.Model):
     __tablename__ = 'state'
 
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(length=20))
-    abbreviation = db.Column(db.String(length=2))
     cases_2_weeks_ago = db.Column(db.Integer, default=0)
     total_cases = db.Column(db.Integer, default=0)
     new_cases = db.Column(db.Integer, default=0)
 
-    counties = relationship('County')
+    counties = relationship('County', back_populates='state')
+
+    def __repr__(self):
+        return '{}: {} new cases'.format(self.name, self.new_cases)
 
 
 class County(db.Model):
@@ -20,13 +23,16 @@ class County(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     state_id = db.Column(db.Integer, ForeignKey('state.id'))
-    name = db.Column(db.String(length=20))
+    state = relationship('State', back_populates = 'counties')  
+    name = db.Column(db.String(length=50))
     cases_2_weeks_ago = db.Column(db.Integer, default=0)
     total_cases = db.Column(db.Integer, default=0)
     new_cases = db.Column(db.Integer, default=0)
 
-    airports = relationship('Airport')
+    airports = relationship('Airport', back_populates='county')
 
+    def __repr__(self):
+        return '{}: {} new cases'.format(self.name, self.new_cases)
 
 class Airport(db.Model):
     __tablename__ = 'airport'
@@ -34,7 +40,12 @@ class Airport(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     icao24 = db.Column(db.String(length=4))
     county_id = db.Column(db.Integer, ForeignKey('county.id'))
+    county = relationship('County', back_populates = 'airports')
     code = db.Column(db.String(length=3))
+
+    departed_flights = relationship('Flight', back_populates='departing_airport', foreign_keys='Flight.departing_airport_id')
+    arriving_flights = relationship('Flight', back_populates='arriving_airport', foreign_keys='Flight.arriving_airport_id')
+
 
 
 class Flight(db.Model):
@@ -42,8 +53,13 @@ class Flight(db.Model):
 
     id = db.Column(db.Integer, primary_key = True)
     flight_number = db.Column(db.String(length=20))
+
     departing_airport_id = db.Column(db.Integer, ForeignKey('airport.id'))
+    departing_airport = relationship('Airport', back_populates = 'departed_flights', foreign_keys=[departing_airport_id])
+
     arriving_airport_id = db.Column(db.Integer, ForeignKey('airport.id'))
+    arriving_airport = relationship('Airport', back_populates = 'arriving_flights', foreign_keys=[arriving_airport_id])
+
     departure_time = db.Column(db.TIMESTAMP())
     expected_arrival_time = db.Column(db.TIMESTAMP())
     latitude = db.Column(db.Float())
