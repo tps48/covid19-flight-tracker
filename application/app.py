@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 
@@ -17,6 +17,10 @@ def index():
     result = db.session.query(State).all()
     print(result)
     return str(result)
+
+@app.route('/map')
+def map():
+    return render_template('/index.html')
 
 @app.route('/state/<state>')
 def county_cases(state):
