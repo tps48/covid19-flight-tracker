@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -14,13 +15,15 @@ from models import State, County
 
 @app.route('/')
 def index():
-    result = db.session.query(State).all()
-    print(result)
-    return str(result)
+    return render_template('/covidmap.html')
 
-@app.route('/map')
-def map():
-    return render_template('/index.html')
+@app.route('/stateData')
+def stateData():
+    print(os.listdir())
+    f = open('application/json/stateData.geojson', 'r')
+    contents = f.read()
+    f.close()
+    return contents
 
 @app.route('/state/<state>')
 def county_cases(state):
