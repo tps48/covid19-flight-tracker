@@ -19,8 +19,8 @@ def index():
 
 @app.route('/stateData')
 def stateData():
-    print(os.listdir())
-    f = open('application/json/stateData.geojson', 'r')
+    script_dir = os.path.dirname(__file__)
+    f = open(script_dir + '/json/stateData.geojson', 'r')
     contents = f.read()
     f.close()
     return contents
