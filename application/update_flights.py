@@ -26,6 +26,7 @@ class FlightTemplate:
   
 
 # delete existing entries
+# confirm this doesn't cause foreign key issues
 print('Deleted '+str(Flight.query.delete())+' flights')
 
 # 1st REST API call to OpenSky
@@ -51,17 +52,23 @@ for flightObj in currentFlights:
     for temp in validFlightList:
         if temp.icao == flightObj['icao24']:
 
-            flight = Flight(
-                id = assignNewFlightID()
-                flight_number = callsign
-                departing_airport_id = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estDepartureAirport'])).one()
-                arriving_airport_id = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estArrivalAirport'])).one()
-                depature_time = flightObj['firstSeen']
-                expected_arrival_time = flightObj['lastSeen']
-                latitude = temp.lat 
-                longitude = temp.lon
-                delayed = temp.on_g #Want changed to on_ground
-                on_route = true #Want this one removed
-                #true_tracks = temp.true_t (float)
-                last_updated = datetime.datetime.now().timestamp()
-            )
+            try:
+                flight = Flight(
+                    id = assignNewFlightID()
+                    flight_number = callsign
+                    departing_airport_id = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estDepartureAirport'])).one()
+                    arriving_airport_id = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estArrivalAirport'])).one()
+                    depature_time = flightObj['firstSeen']
+                    expected_arrival_time = flightObj['lastSeen']
+                    latitude = temp.lat 
+                    longitude = temp.lon
+                    delayed = temp.on_g #Want changed to on_ground
+                    on_route = true #Want this one removed
+                    #true_tracks = temp.true_t (float)
+                    last_updated = datetime.datetime.now().timestamp()
+                )
+            db.session.add(flight)
+            except Exception as e:
+                print('ERROR: Unable to add flight for the state ' + str(flightObj) + ': ' + str(temp))
+
+db.session.commit()
