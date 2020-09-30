@@ -48,7 +48,7 @@ for index, row in fileData.iterrows():
         airportCounty = db.session.query(County).filter(County.state == airportState).filter(County.name == func.lower(row['County'])).one()
 
         airport = Airport(
-            id = assignNewAirportID,
+            id = assignNewAirportID(),
             icao24 = row['IcaoIdentifier'],
             county_id = airportCounty.id,
             county = aiportCounty,
