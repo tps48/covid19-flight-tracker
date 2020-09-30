@@ -38,22 +38,20 @@ for index, row in fileData.iterrows():
     if row['State'] in territories:
         break
     elif row['State'] == "DIST. OF COLUMBIA":
-        stateName = 'VIRGINIA'
+        stateName = 'DISTRICT OF COLUMBIA'
     else:
         stateName = row['State']
     
     try:
-        state = State(name= func.lower(stateName))
-
-        county = County(
-            name = func.lower(row['County']),
-            state = state
-        )
+        
+        airportState = db.session.query(State).filter(func.lower(State.name) == func.lower(stateName)).one()
+        airportCounty = db.session.query(County).filter(County.state == airportState).filter(County.name == func.lower(row['County'])).one()
 
         airport = Airport(
             id = assignNewAirportID,
             icao24 = row['IcaoIdentifier'],
-            county = county,
+            county_id = airportCounty.id,
+            county = aiportCounty,
             code = func.lower(row['FacilityName'])
         )
         print(row['FacilityName'])
