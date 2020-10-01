@@ -36,12 +36,12 @@ for index, row in fileData.iterrows():
 
     stateName = ''
     #check for territories (DC gets modded to virginia)
-    if row['State'] in territories:
+    if row['StateName'] in territories:
         break
-    elif row['State'] == "DIST. OF COLUMBIA":
+    elif row['StateName'] == "DIST. OF COLUMBIA":
         stateName = 'DISTRICT OF COLUMBIA'
     else:
-        stateName = row['State']
+        stateName = row['StateName']
     
     try:
 
@@ -50,6 +50,7 @@ for index, row in fileData.iterrows():
             airportState = airportState[0]
             print('State: ' + airportState.name)
             
+            countyName = row['County']
             airportCounty = db.session.query(County).filter(County.state_id == airportState.id).filter(County.name == func.lower(countyName)).all()
             if len(airportCounty) > 0:
                 airportCounty = airportCounty[0]
