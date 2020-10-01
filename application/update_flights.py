@@ -26,7 +26,6 @@ class FlightTemplate:
   
 
 # delete existing entries
-# confirm this doesn't cause foreign key issues
 print('Deleted '+str(Flight.query.delete())+' flights')
 
 # 1st REST API call to OpenSky
@@ -53,11 +52,13 @@ for flightObj in currentFlights:
         if temp.icao == flightObj['icao24']:
 
             try:
+                dAirport = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estDepartureAirport'])).one()
+                aAirport = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estArrivalAirport'])).one() 
                 flight = Flight(
                     id = assignNewFlightID()
                     flight_number = callsign
-                    departing_airport_id = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estDepartureAirport'])).one()
-                    arriving_airport_id = db.session.query(Airport).filter(func.lower(Airport.icao24) == func.lower(flightObj['estArrivalAirport'])).one()
+                    departing_airport_id = dAirport.id
+                    arriving_airport_id = aAirport.id
                     depature_time = flightObj['firstSeen']
                     expected_arrival_time = flightObj['lastSeen']
                     latitude = temp.lat 
@@ -67,8 +68,8 @@ for flightObj in currentFlights:
                     #true_tracks = temp.true_t (float)
                     last_updated = datetime.datetime.now().timestamp()
                 )
-            db.session.add(flight)
+                db.session.add(flight)
             except Exception as e:
                 print('ERROR: Unable to add flight for the state ' + str(flightObj) + ': ' + str(temp))
 
-db.session.commit()
+            db.session.commit()
