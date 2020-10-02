@@ -64,7 +64,7 @@ class Flight(db.Model):
     expected_arrival_time = db.Column(db.TIMESTAMP())
     latitude = db.Column(db.Float())
     longitude = db.Column(db.Float())
-    delayed = db.Column(db.Boolean())
-    en_route = db.Column(db.Boolean())
+    on_ground = db.Column(db.Boolean())
+    true_tracks = db.Column(db.Float())
     last_updated = db.Column(db.TIMESTAMP())
 
