@@ -36,10 +36,10 @@ for vector in stateVectors:
 #Time constraint of 15 minutes
 end = datetime.datetime.now()
 begin = end - datetime.timedelta(minutes=15)
-endEpoch = int(end.timestamp() * 1000)
-beginEpoch = int(begin.timestamp() *1000)
+endEpoch = int(end.timestamp())
+beginEpoch = int(begin.timestamp())
 
-currentFlights = json.loads(requests.get('https://seniorProjectDJT:gimmeFlightInf0@opensky-network.org/api/flights/all?begin=1517227200&end=1517230800').text)
+currentFlights = json.loads(requests.get('https://seniorProjectDJT:gimmeFlightInf0@opensky-network.org/api/flights/all?begin={}&end={}'.format(beginEpoch, endEpoch)).text)
 # Loop through 2nd query
 for flightObj in currentFlights:
     #Look through valid flights for a match
