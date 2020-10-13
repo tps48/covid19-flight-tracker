@@ -42,9 +42,13 @@ class Airport(db.Model):
     county_id = db.Column(db.Integer, ForeignKey('county.id'))
     county = relationship('County', back_populates = 'airports')
     code = db.Column(db.String(length=3))
+    latitude = db.Column(db.Float())
+    longitude = db.Column(db.Float())
 
     departed_flights = relationship('Flight', back_populates='departing_airport', foreign_keys='Flight.departing_airport_id')
     arriving_flights = relationship('Flight', back_populates='arriving_airport', foreign_keys='Flight.arriving_airport_id')
+    outgoing_routes = relationship('Route', back_populates='source_airport', foreign_keys='Route.source_airport_id')
+    incoming_routes = relationship('Route', back_populates='dest_airport', foreign_keys='Route.dest_airport_id')
 
 
 
@@ -67,4 +71,16 @@ class Flight(db.Model):
     on_ground = db.Column(db.Boolean())
     true_tracks = db.Column(db.Float())
     last_updated = db.Column(db.TIMESTAMP())
+
+class Route(db.Model):
+    __tablename__ = 'route'
+
+    id = db.Column(db.Integer, primary_key = True)
+
+    source_airport_id = db.Column(db.Integer, ForeignKey('airport.id'))
+    source_airport = relationship('Airport', back_populates = 'outgoing_routes', foreign_keys=[source_airport_id])
+
+    dest_airport_id = db.Column(db.Integer, ForeignKey('airport.id'))
+    dest_airport = relationship('Airport', back_populates = 'incoming_routes', foreign_keys=[dest_airport_id])
+
 

@@ -54,12 +54,24 @@ for index, row in fileData.iterrows():
                 if len(airportCounty) > 0:
                     airportCounty = airportCounty[0]
                     print('County: ' + airportCounty.name)
+                    arp_latitude = row['ARPLatitudeS']
+                    arp_longitude = row['ARPLongitudeS']
+                    lat = float(arp_latitude[0:11])/3600
+                    if arp_latitude[11] == 'S':
+                        lat *= -1
+
+                    longt = float(arp_longitude[0:11])/3600
+                    if arp_longitude[11] == 'W':
+                        longt *= -1
 
                     airport = Airport(
                         icao24 = row['IcaoIdentifier'],
                         county_id = airportCounty.id,
-                        code = func.lower(row['LocationID'][1:])
+                        code = func.lower(row['LocationID'][1:]),
+                        latitude = lat,
+                        longitude = longt
                     )
+
                     print(row['FacilityName'])
                     db.session.add(airport)
 
