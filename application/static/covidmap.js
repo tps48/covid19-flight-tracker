@@ -18,7 +18,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
 
       map.addSource('covid-numbers', {
         'type': 'geojson',
-        'data': '/stateData'
+        'data': '/countyData'
       });
 
       console.log('loading...')
@@ -32,8 +32,8 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
           'fill-color': [
             'rgb',
             240,
-            ['max', ['-', 240, ['/', ['get', 'cases'], 100]], 0],
-            ['max', ['-', 240, ['/', ['get', 'cases'], 100]], 0]
+            ['max', ['-', 240, ['/', ['get', 'cases'], 5]], 0],
+            ['max', ['-', 240, ['/', ['get', 'cases'], 5]], 0]
           ],
           'fill-opacity': 0.4
         }

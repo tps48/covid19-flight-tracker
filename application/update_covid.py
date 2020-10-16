@@ -15,12 +15,18 @@ def update_covid_db():
 
     #load the mapbox tileset
     script_dir = os.path.dirname(__file__)
-    f = open(script_dir + '/json/stateData.geojson', 'r')
+    f = open(script_dir + '/json/stateData.geojson', 'r') 
     contents = f.read()
     f.close()
     mapbox_data = json.loads(contents)
     mapbox_dict = mapbox_data['features']
 
+    #load county tileset
+    f = open(script_dir + '/json/countyData.geojson', 'r', encoding='ISO-8859-1') 
+    contents = f.read()
+    f.close()
+    county_data = json.loads(contents)
+    county_dict = county_data['features']
     #count number counties updated
     count = 0
 
@@ -43,7 +49,10 @@ def update_covid_db():
             for county in result:
 
                 name = county['county']
-                if name is not None and 'out of' not in name and name != 'unassigned':
+                filtered = ['kusilvak', 'unassigned', 'kansas city', 'bear river', 'central utah', 'southeast utah', 'southwest utah', 'northeast utah', 'northwest utah', 
+                'weber-morgan', 'tricounty', 'dukes and nantucket', 'federal correctional institution (fci)']
+
+                if name is not None and name not in filtered and 'out of' not in name and 'department of corrections' not in name:
                     case_list = list(county['timeline']['cases'].values())
                     cases_2_weeks_ago = case_list[0]
                     current_cases = case_list[-1]
@@ -61,6 +70,12 @@ def update_covid_db():
                         current_county.total_cases = current_cases
                         current_county.new_cases = new_cases
 
+                    print(name.lower())
+
+                    # update mapbox county tile data
+                    current_county_dict = list(filter(lambda item: item['properties']['STATE'].lower() == state_name.lower() and item['properties']['NAME'].lower() == name.lower(), county_dict))[0]
+                    current_county_dict['properties']['cases'] = new_cases
+
             # update state numbers
             current_state.cases_2_weeks_ago = sum_2_week_cases
             current_state.total_cases = sum_current_cases
@@ -77,6 +92,9 @@ def update_covid_db():
     # write updated data to file
     with open(script_dir + '/json/stateData.geojson', 'w') as outfile:
         json.dump(mapbox_data, outfile)
+
+    with open(script_dir + '/json/countyData.geojson', 'w') as outfile:
+        json.dump(county_data, outfile)
 
 if __name__ == '__main__':
     update_covid_db()

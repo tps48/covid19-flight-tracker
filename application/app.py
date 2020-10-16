@@ -25,6 +25,14 @@ def stateData():
     f.close()
     return contents
 
+@app.route('/countyData')
+def countyData():
+    script_dir = os.path.dirname(__file__)
+    f = open(script_dir + '/json/countyData.geojson', 'r')
+    contents = f.read()
+    f.close()
+    return contents
+
 @app.route('/airports')
 def airports():
     result = db.session.query(Airport).all()
