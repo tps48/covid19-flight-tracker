@@ -16,18 +16,43 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
         }
       }
 
-      map.addSource('covid-numbers', {
+      map.addSource('state-numbers', {
+        'type': 'geojson',
+        'data': '/stateData'
+      });
+
+      console.log('loading state data...')
+
+      map.addLayer({
+        'id': 'state-fill',
+        'type': 'fill',
+        'source': 'state-numbers',
+        'layout': {},
+        'paint': {
+          'fill-color': [
+            'rgb',
+            240,
+            ['max', ['-', 240, ['/', ['get', 'cases'], 100]], 0],
+            ['max', ['-', 240, ['/', ['get', 'cases'], 100]], 0]
+          ],
+          'fill-opacity': 0.4
+        }
+      }, firstSymbolId);
+
+      map.addSource('county-numbers', {
         'type': 'geojson',
         'data': '/countyData'
       });
 
-      console.log('loading...')
+      console.log('loading county data...')
 
       map.addLayer({
-        'id': 'covid-fill',
+        'id': 'county-fill',
         'type': 'fill',
-        'source': 'covid-numbers',
-        'layout': {},
+        'source': 'county-numbers',
+        'layout': {
+          'visibility': 'none'
+        },
         'paint': {
           'fill-color': [
             'rgb',
@@ -40,6 +65,24 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
       }, firstSymbolId);
       
     });
+
+    var list = document.getElementById('layer');
+    list.addEventListener('change', (event) => {
+      console.log('toggling');
+      var selected = list.selectedIndex;
+      console.log(event.target.value);
+      
+      if(event.target.value == 'state') {
+        map.setLayoutProperty('state-fill', 'visibility', 'visible');
+        map.setLayoutProperty('county-fill', 'visibility', 'none');
+      }
+      else if(event.target.value == 'county') {
+        map.setLayoutProperty('state-fill', 'visibility', 'none');
+        map.setLayoutProperty('county-fill', 'visibility', 'visible');
+      }
+    });
+
+
 
     map.getCanvas().style.cursor = 'default';
 
