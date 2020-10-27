@@ -17,6 +17,10 @@ from models import State, County, Airport
 def index():
     return render_template('/index.html')
 
+@app.route('/map')
+def map():
+    return render_template('/covidmap.html')
+
 @app.route('/stateData')
 def stateData():
     script_dir = os.path.dirname(__file__)

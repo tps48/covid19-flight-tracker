@@ -63,7 +63,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
           'fill-opacity': 0.4
         }
       }, firstSymbolId);
-    /*  
+      
       //Add airport markers
 
       // Add an image to use as a custom marker
@@ -117,7 +117,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
         map.getCanvas().style.cursor = '';
         popup.remove();
       });
-    */
+    
     }); //map.on('load')
 
     var list = document.getElementById('layer');
