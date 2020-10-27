@@ -63,15 +63,68 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
           'fill-opacity': 0.4
         }
       }, firstSymbolId);
-      
-    });
+    /*  
+      //Add airport markers
+
+      // Add an image to use as a custom marker
+      map.loadImage('https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+      function (error, image) {
+          if (error) throw error;
+          map.addImage('custom-marker', image);
+
+          map.addSource('airports', {
+            'type': 'geojson',
+            'data': '/airportData'
+          });
+
+          map.addLayer({
+            'id': 'airports',
+            'type': 'symbol',
+            'source': 'airports',
+            'layout': {
+              'icon-image': 'custom-marker',
+              'icon-allow-overlap': true
+            }
+          });
+        }
+      );
+
+      //Create popup to be added later
+      var popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false
+      });
+
+      map.on('mouseenter','airports', function (e) {
+
+        //Change cursor for user benefit 
+        map.getCanvas().style.cursor = 'pointer';
+
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var name = e.features[0].properties.name;
+
+        //This math function ensures the pop-up is the one being hovered
+        //over. Helps prevent bugs when zooming in and out 
+        while(Math.abs(e.lngLat.lng - coordinates[0]) >180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        popup.setLngLat(coordinates).setHTML(name).addTo(map);
+      });
+
+      //Closes popup when hover stops
+      map.on('mouseleave', 'airports', function () {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+      });
+    */
+    }); //map.on('load')
 
     var list = document.getElementById('layer');
     list.addEventListener('change', (event) => {
       console.log('toggling');
       var selected = list.selectedIndex;
       console.log(event.target.value);
-      
       if(event.target.value == 'state') {
         map.setLayoutProperty('state-fill', 'visibility', 'visible');
         map.setLayoutProperty('county-fill', 'visibility', 'none');
@@ -81,6 +134,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
         map.setLayoutProperty('county-fill', 'visibility', 'visible');
       }
     });
+
 
 
 
