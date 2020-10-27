@@ -9,7 +9,7 @@ airportQuery = db.session.query(Airport).all()
 features = []
 
 for airport in airportQuery:
-    point = Point((float(airport.latitude), float(airport.longitude)))
+    point = Point((float(airport.longitude), float(airport.latitude)))
     
     features.append(Feature(geometry=point, properties={"name": airport.code}))
 

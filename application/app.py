@@ -15,6 +15,10 @@ from models import State, County, Airport
 
 @app.route('/')
 def index():
+    return render_template('/index.html')
+
+@app.route('/map')
+def map():
     return render_template('/covidmap.html')
 
 @app.route('/stateData')
@@ -33,11 +37,13 @@ def countyData():
     f.close()
     return contents
 
-@app.route('/airports')
+@app.route('/airportData')
 def airports():
-    result = db.session.query(Airport).all()
-    print(result)
-    return str(result)
+    script_dir = os.path.dirname(__file__)
+    f = open(script_dir + '/json/airportData.geojson', 'r')
+    contents = f.read()
+    f.close()
+    return contents
 
 @app.route('/state/<state>')
 def county_cases(state):
