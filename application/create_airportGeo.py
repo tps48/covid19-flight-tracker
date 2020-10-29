@@ -8,6 +8,7 @@ from sqlalchemy import func
 airportQuery = db.session.query(Airport).all()
 features = []
 
+
 for airport in airportQuery:
     point = Point((float(airport.longitude), float(airport.latitude)))
     
@@ -15,6 +16,7 @@ for airport in airportQuery:
 
 feature_collection = FeatureCollection(features)
 
-with open('./json/airportData.geojson', 'w') as f:
+script_dir = os.path.dirname(__file__)
+with open(script_dir + '/json/airportData.geojson', 'w') as f:
     dump(feature_collection, f)
     
