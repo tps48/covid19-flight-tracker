@@ -135,7 +135,27 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
       }
     });
 
-
+    var covidFilter = document.getElementById('cases');
+    covidFilter.addEventListener('input', event => {
+      console.log('filtering...');
+      minCases = covidFilter.value;
+      map.removeLayer('airports');
+      map.removeSource('airports');
+      var path = '/airportData/'+minCases;
+      map.addSource('airports', {
+            'type': 'geojson',
+            'data': path
+      });
+      map.addLayer({
+        'id': 'airports',
+        'type': 'symbol',
+        'source': 'airports',
+        'layout': {
+          'icon-image': 'custom-marker',
+          'icon-allow-overlap': true
+        }
+      });
+    });
 
 
     map.getCanvas().style.cursor = 'default';

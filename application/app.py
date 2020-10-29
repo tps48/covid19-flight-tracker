@@ -1,5 +1,6 @@
 import os
 import json
+import geojson
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
@@ -17,11 +18,11 @@ from models import State, County, Airport
 def index():
     return render_template('/index.html')
 
-@app.route('/map')
+@app.route('/map/')
 def map():
     return render_template('/covidmap.html')
 
-@app.route('/stateData')
+@app.route('/stateData/')
 def stateData():
     script_dir = os.path.dirname(__file__)
     f = open(script_dir + '/json/stateData.geojson', 'r')
@@ -29,7 +30,7 @@ def stateData():
     f.close()
     return contents
 
-@app.route('/countyData')
+@app.route('/countyData/')
 def countyData():
     script_dir = os.path.dirname(__file__)
     f = open(script_dir + '/json/countyData.geojson', 'r')
@@ -37,7 +38,7 @@ def countyData():
     f.close()
     return contents
 
-@app.route('/airportData')
+@app.route('/airportData/')
 def airports():
     script_dir = os.path.dirname(__file__)
     f = open(script_dir + '/json/airportData.geojson', 'r')
@@ -45,12 +46,25 @@ def airports():
     f.close()
     return contents
 
-@app.route('/state/<state>')
+@app.route('/state/<state>/')
 def county_cases(state):
     result = db.session.query(County).join(State).filter(func.lower(State.name) == func.lower(state)).all()
     print(result)
     return str(result)
 
+@app.route('/airportData/<num_cases>/')
+def airport_filter(num_cases):
+    script_dir = os.path.dirname(__file__)
+    with open(script_dir + '/json/airportData.geojson', 'r') as f:
+        airport_json = json.load(f)
+    airport_features = airport_json["features"]
+    valid_airport_features = list(filter(lambda entry: airport_filter_helper(num_cases, entry), airport_features))
+    return geojson.FeatureCollection(valid_airport_features)
+
+def airport_filter_helper(num_cases, airport_entry):
+    name = airport_entry["properties"]["name"]
+    airport = db.session.query(Airport).filter(func.lower(name) == func.lower(Airport.code)).first()
+    return airport.county.new_cases >= int(num_cases)
 
 if __name__ == '__main__':
     app.run()
