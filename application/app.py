@@ -52,6 +52,27 @@ def county_cases(state):
     print(result)
     return str(result)
 
+@app.route('/airportData/<airport_name>')
+def airport_router(airport_name):
+    script_dir = os.path.dirname(__file__)
+    
+    with open(script_dir + '/json/airportData.geojson', 'r') as f:
+        airport_json = json.load(f)
+    airport_features = airport_json["features"]
+
+    airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
+    destinationAirports = []
+    outRoutes = airport.outgoing_routes
+    for row in outRoutes:
+        destinationAirports.append(str(row.dest_airport.code))
+    
+    airportConnectionList = list(filter(lambda entry: airport_router_helper(destinationAirports, entry), airport_features))
+    return geojson.FeatureCollection(airportConnectionList)
+
+def airport_router_helper(destinationAirports, airport_entry):
+    entryName = airport_entry["properties"]["name"]
+    return any( destination in entryName for destination in destinationAirports)
+
 @app.route('/airportData/<num_cases>/')
 def airport_filter(num_cases):
     script_dir = os.path.dirname(__file__)
