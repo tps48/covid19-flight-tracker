@@ -213,16 +213,25 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
     searchAirport = document.getElementById('airportcode');
     searchButton = document.getElementById('search');
     searchButton.addEventListener('click', event => {
-      var source = map.getSource('foundAirport');
-      if(typeof source != 'undefined') {
-        map.removeSource('foundAirport');
-      }
+      
+      map.removeLayer('airports');
+      map.removeSource('airports');
+      
       path = /findAirport/+searchAirport.value;
-      map.addSource('foundAirport', {
+      map.addSource('airports', {
         'type': 'geojson',
         'data': path
       });
-      console.log('Loaded.');
+      map.addLayer({
+        'id': 'airports',
+        'type': 'symbol',
+        'source': 'airports',
+        'layout': {
+          'icon-image': 'custom-marker',
+          'icon-allow-overlap': true
+        }
+      });
+      
     });
 
 
