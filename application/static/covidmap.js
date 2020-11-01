@@ -210,13 +210,12 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
       });
     });
 
+    //Airport search function
     searchAirport = document.getElementById('airportcode');
     searchButton = document.getElementById('search');
     searchButton.addEventListener('click', event => {
-      
       map.removeLayer('airports');
       map.removeSource('airports');
-      
       path = /findAirport/+searchAirport.value;
       map.addSource('airports', {
         'type': 'geojson',
