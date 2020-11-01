@@ -16,6 +16,8 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
         }
       }
 
+      //Add state layer
+
       map.addSource('state-numbers', {
         'type': 'geojson',
         'data': '/stateData'
@@ -38,6 +40,8 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
           'fill-opacity': 0.4
         }
       }, firstSymbolId);
+
+      //Add county layer
 
       map.addSource('county-numbers', {
         'type': 'geojson',
@@ -101,7 +105,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
         map.getCanvas().style.cursor = 'pointer';
 
         var coordinates = e.features[0].geometry.coordinates.slice();
-        var name = e.features[0].properties.name;
+        var name = e.features[0].properties.name.toUpperCase();
 
         //This math function ensures the pop-up is the one being hovered
         //over. Helps prevent bugs when zooming in and out 
@@ -120,6 +124,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
     
     }); //map.on('load')
 
+    //Switch between state layer and county layer
     var list = document.getElementById('layer');
     list.addEventListener('change', (event) => {
       console.log('toggling');
@@ -135,16 +140,86 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
       }
     });
 
-    var covidFilter = document.getElementById('cases');
-    covidFilter.addEventListener('input', event => {
+    //Filter airports based on input
+    var covidMinFilter = document.getElementById('mincases');
+    var covidMaxFilter = document.getElementById('maxcases');
+    var filterButton = document.getElementById('filter');
+
+    filterButton.addEventListener('click', event => {
       console.log('filtering...');
-      minCases = covidFilter.value;
+      minCases = covidMinFilter.value;
+      maxCases = covidMaxFilter.value;
+      if(minCases.length == 0 && maxCases.length == 0) {
+        console.log('No filter input');
+      }
+      else {
+        map.removeLayer('airports');
+        map.removeSource('airports');
+        if(minCases.length != 0 && maxCases.length != 0) {
+          var path = '/airportData/minMax/'+minCases+'/'+maxCases;
+          map.addSource('airports', {
+                'type': 'geojson',
+                'data': path
+          }); 
+        }
+        else if(minCases.length == 0) {
+          var path = '/airportData/max/'+maxCases;
+          map.addSource('airports', {
+                'type': 'geojson',
+                'data': path
+          }); 
+        }
+        else if(maxCases.length == 0) {
+          var path = '/airportData/min/'+minCases;
+          map.addSource('airports', {
+                'type': 'geojson',
+                'data': path
+          }); 
+        }
+        map.addLayer({
+          'id': 'airports',
+          'type': 'symbol',
+          'source': 'airports',
+          'layout': {
+            'icon-image': 'custom-marker',
+            'icon-allow-overlap': true
+          }
+        }); 
+      }
+    });
+
+    //Reset the airport filter when reset button is clicked
+    resetButton = document.getElementById('reset');
+    resetButton.addEventListener('click', event => {
+      console.log('Resetting airports');
       map.removeLayer('airports');
       map.removeSource('airports');
-      var path = '/airportData/'+minCases;
       map.addSource('airports', {
-            'type': 'geojson',
-            'data': path
+        'type': 'geojson',
+        'data': '/airportData'
+      });
+
+      map.addLayer({
+        'id': 'airports',
+        'type': 'symbol',
+        'source': 'airports',
+        'layout': {
+          'icon-image': 'custom-marker',
+          'icon-allow-overlap': true
+        }
+      });
+    });
+
+    //Airport search function
+    searchAirport = document.getElementById('airportcode');
+    searchButton = document.getElementById('search');
+    searchButton.addEventListener('click', event => {
+      map.removeLayer('airports');
+      map.removeSource('airports');
+      path = /findAirport/+searchAirport.value;
+      map.addSource('airports', {
+        'type': 'geojson',
+        'data': path
       });
       map.addLayer({
         'id': 'airports',
@@ -155,6 +230,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
           'icon-allow-overlap': true
         }
       });
+      
     });
 
 
