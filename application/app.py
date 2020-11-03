@@ -58,8 +58,8 @@ def find_airport(code):
     else:
         return "Empty"
 
-@app.route('/airportRoutes/<airport_name>/')
-def airport_router(airport_name):
+@app.route('/outgoingConnections/<airport_name>/')
+def outgoing_router(airport_name):
     script_dir = os.path.dirname(__file__)
     
     with open(script_dir + '/json/airportData.geojson', 'r') as f:
@@ -75,9 +75,27 @@ def airport_router(airport_name):
     airportConnectionList = list(filter(lambda entry: airport_router_helper(destinationAirports, entry), airport_features))
     return geojson.FeatureCollection(airportConnectionList)
 
-def airport_router_helper(destinationAirports, airport_entry):
+@app.route('/incomingConnections/<airport_name>/')
+def incoming_router(airport_name):
+    script_dir = os.path.dirname(__file__)
+
+    with open(script_dir + '/json/airportData.geojson', 'r') as f:
+        airport_json = json.load(f)
+    airport_features = airport_json["features"]
+
+    airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
+    sourceAirports = []
+    inRoutes = airport.incoming_routes
+    for row in inRoutes:
+        sourceAirports.append(str(row.source_airport.code))
+
+    airportConnectionList = list(filter(lambda entry: airport_router_helper(sourceAirports, entry), airport_features))
+    return geojson.FeatureCollection(airportConnectionList)
+    
+
+def airport_router_helper(airports, airport_entry):
     entryName = airport_entry["properties"]["name"]
-    return any( destination in entryName for destination in destinationAirports)
+    return any( location in entryName for location in airports)
 
 @app.route('/airportData/')
 def airports():
