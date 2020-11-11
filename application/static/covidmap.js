@@ -68,6 +68,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
         }
       }, firstSymbolId);
       
+      
       //Add airport markers
 
       // Add an image to use as a custom marker
@@ -121,8 +122,26 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
         map.getCanvas().style.cursor = '';
         popup.remove();
       });
+
+      //New part for connections
+      map.on('click', 'airports', function (e) {
+   //     var name = e.features[0].properties.name.toUpperCase();
+        var feature = e.features[0];
+        var incomingChecked = document.getElementById("optionIn").checked;
+        //try fetching JSONS here - use fetch json func from stack
+        var content = '<div><strong> Please select incoming or outgoing for ' + feature.properties.name + ' ' + incomingChecked +'</strong></div>';
+        connectionInfo.innerHTML = content; 
+      });
+
+      map.on('move', empty);
     
     }); //map.on('load')
+
+    //Event listeners for incoming and outgoing flight listings
+    var incomingButton = document.getElementById('optionIn');
+    incomingButton.addEventListener('click', event => {
+
+    });
 
     //Switch between state layer and county layer
     var list = document.getElementById('layer');
@@ -233,6 +252,10 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
       
     });
 
+    function empty() {
+      connectionInfo.innerHTML = '<div><strong>Click a marker</strong></div>';
+    }
+    empty();
 
     map.getCanvas().style.cursor = 'default';
 
