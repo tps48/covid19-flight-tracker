@@ -2,7 +2,7 @@ import requests
 import json
 import sys
 from app import db
-from models import Flight, Airport, County, State
+from models import Flight, Airport, County, State, Route
 from pandas import DataFrame, read_excel
 import pandas as pd 
 import xlrd
@@ -12,6 +12,7 @@ from sqlalchemy import func
 #from Sets import set
 
 print('Populating airports')
+print('Deleted '+str(Route.query.delete())+' routes')
 print('Deleted '+str(Airport.query.delete())+' airports')
 airportID = 0
 
@@ -47,14 +48,10 @@ for index, row in fileData.iterrows():
             airportState = db.session.query(State).filter(func.lower(State.name) == func.lower(stateName)).all()
             if len(airportState) > 0:
                 airportState = airportState[0]
-                print('State: ' + airportState.name)
-                
                 countyName = row['County']
-                print(countyName)
                 airportCounty = db.session.query(County).filter(County.state_id == airportState.id).filter(func.lower(County.name) == func.lower(countyName)).all()
                 if len(airportCounty) > 0:
                     airportCounty = airportCounty[0]
-                    print('County: ' + airportCounty.name)
                     arp_latitude = row['ARPLatitudeS']
                     arp_longitude = row['ARPLongitudeS']
                     lat = float(arp_latitude[0:11])/3600
@@ -72,14 +69,13 @@ for index, row in fileData.iterrows():
                         latitude = lat,
                         longitude = longt
                     )
-
-                    print(row['FacilityName'])
                     db.session.add(airport)
+                else:
+                    print('CODE: {}, State: {}, County: {}'.format(row['LocationID'], row['StateName'], row['County']))
 
         except Exception as e:
             print('ERROR: Unable to add airport ' + str(e))
 
 db.session.commit()
-print('{} states'.format(len(state_set)))
 
 
