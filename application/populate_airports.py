@@ -11,6 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 #from Sets import set
 
+print('Populating airports')
 print('Deleted '+str(Airport.query.delete())+' airports')
 airportID = 0
 

@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from models import Airport
 from geojson import Point, Feature, FeatureCollection, dump
 from sqlalchemy import func
+import os
 
 airportQuery = db.session.query(Airport).all()
 features = []

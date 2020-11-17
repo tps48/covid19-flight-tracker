@@ -16,6 +16,7 @@ f = open(script_dir + '/data/routes.csv', 'r')
 routes = pd.read_csv(f)
 routes_added = 0
 
+print('Populating routes')
 print('Deleted '+str(Route.query.delete())+' routes')
 print('Working...')
 
