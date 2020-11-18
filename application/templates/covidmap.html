@@ -20,7 +20,7 @@
       </fieldset>
     </div>
     <button type="button" class="btn btn-link" href="https://github.com/tps48/covid19-flight-tracker">GitHub</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">Project Description</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" id="Description">Project Description</button>
     <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">   
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -45,17 +45,17 @@
       <div class="text-center">
         <fieldset>
           <h1>Connections</h1>
+          <div class="connectionInfo" id="connectionInfo"></div>
         </fieldset>
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
           <label class="btn btn-secondary active">
             <input type="radio" name="options" id="optionIn" autocomplete="off"> Incoming
           </label>
           <label class="btn btn-secondary">
-            <input type="radio" name="options" id="optionOut" autocomplete="off"> Outcoming
+            <input type="radio" name="options" id="optionOut" autocomplete="off"> Outgoing
           </label>
         </div>
       </div>
-      <div class="connectionInfo" id="connectionInfo"></div>
     </div>   
   </div>
   <div class="map-overlay-left top">

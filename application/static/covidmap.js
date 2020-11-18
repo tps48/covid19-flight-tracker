@@ -1,4 +1,6 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwcWN0MnFxZWFtaXpyeGw0In0.EVOg-lEJG4XJqlB0l706qQ'; // replace this with your access token
+//variable representing the current airport
+var currentAirport = "";
     var map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/seniorprojectdjt/ckfbiqp964g9o19lnubz33fnq', // replace this with your style URL
@@ -125,12 +127,13 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
 
       //New part for connections
       map.on('click', 'airports', function (e) {
-   //     var name = e.features[0].properties.name.toUpperCase();
         var feature = e.features[0];
         var incomingChecked = document.getElementById("optionIn").checked;
         //try fetching JSONS here - use fetch json func from stack
-        var content = '<div><strong> Please select incoming or outgoing for ' + feature.properties.name + ' ' + incomingChecked +'</strong></div>';
+        var content = '<div><strong>Current Airport: ' + feature.properties.name.toUpperCase() +'</strong></div>';
         connectionInfo.innerHTML = content; 
+        currentAirport = feature.properties.name;
+        console.log(currentAirport);
       });
 
       map.on('move', empty);
@@ -140,7 +143,32 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
     //Event listeners for incoming and outgoing flight listings
     var incomingButton = document.getElementById('optionIn');
     incomingButton.addEventListener('click', event => {
+      if(currentAirport != "") {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            returnedJson = JSON.parse(this.responseText);
+            console.log(returnedJson);
+          }
+        }
+        request.open("GET", "/incomingConnections/"+currentAirport+"/", true);
+        request.send();
+      }
+    });
 
+    var outgoingButton = document.getElementById('optionOut');
+    outgoingButton.addEventListener('click', event => {
+      if(currentAirport != "") {
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+            returnedJson = JSON.parse(this.responseText);
+            console.log(returnedJson);
+          }
+        }
+        request.open("GET", "/outgoingConnections/"+currentAirport+"/", true);
+        request.send();
+      }
     });
 
     //Switch between state layer and county layer
@@ -249,8 +277,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
           'icon-allow-overlap': true
         }
       });
-      
-    });
+    }); 
 
     function empty() {
       connectionInfo.innerHTML = '<div><strong>Click a marker</strong></div>';
@@ -260,3 +287,6 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2VuaW9ycHJvamVjdGRqdCIsImEiOiJja2ZiZDgzaDUwc
     map.getCanvas().style.cursor = 'default';
 
     map.fitBounds([[-133.2421875, 16.972741], [-47.63671875, 52.696361]]);
+
+
+
