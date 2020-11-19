@@ -65,15 +65,20 @@ def cases_at_airport(code):
     except:
         abort(404)
 
-@app.route('/airportLocation/<code>/')
+@app.route('/airportInfo/<code>/')
 def airport_county(code):
-    try:
-        airport = db.session.query(Airport).filter(func.lower(str(code)) == func.lower(Airport.code)).first()
-        county_name = airport.county.name
-        state_name = airport.county.state.name
-        return '{}, {}'.format(county_name, state_name)
-    except:
-        abort(404)
+    #try:
+    airport = db.session.query(Airport).filter(func.lower(str(code)) == func.lower(Airport.code)).first()
+    county_name = airport.county.name
+    state_name = airport.county.state.name
+    location = '{}, {}'.format(county_name, state_name)
+    cases = db.session.query(Airport).filter(func.lower(str(code)) == func.lower(Airport.code)).first().county.new_cases
+    dict = {}
+    dict["location"] = location
+    dict["cases"] = cases
+    return dict
+    #except:
+    #abort(404)
 
 @app.route('/outgoingConnections/<airport_name>/')
 def outgoing_router(airport_name):
@@ -84,10 +89,17 @@ def outgoing_router(airport_name):
     #airport_features = airport_json["features"]
 
     airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
-    destinationAirports = set()
+    destinationAirports = []
+    airportSet = set()
     outRoutes = airport.outgoing_routes
     for row in outRoutes:
-        destinationAirports.add(str(row.dest_airport.code))
+        dict = {}
+        dict["code"] = row.dest_airport.code.upper()
+        dict["cases"] = row.dest_airport.county.new_cases
+        dict["location"] = '{}, {}'.format(row.dest_airport.county.name, row.dest_airport.county.state.name)
+        if dict["code"] not in airportSet:
+            destinationAirports.append(dict)
+            airportSet.add(dict["code"])
     
     #airportConnectionList = list(filter(lambda entry: airport_router_helper(destinationAirports, entry), airport_features))
     #return geojson.FeatureCollection(airportConnectionList)
@@ -102,11 +114,17 @@ def incoming_router(airport_name):
     #airport_features = airport_json["features"]
 
     airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
-    sourceAirports = set()
+    sourceAirports = []
+    airportSet = set()
     inRoutes = airport.incoming_routes
     for row in inRoutes:
-        sourceAirports.add(str(row.source_airport.code))
-
+        dict = {}
+        dict["code"] = row.source_airport.code.upper()
+        dict["cases"] = row.source_airport.county.new_cases
+        dict["location"] = '{}, {}'.format(row.source_airport.county.name, row.source_airport.county.state.name)
+        if dict["code"] not in airportSet:
+            sourceAirports.append(dict)
+            airportSet.add(dict["code"])
     #airportConnectionList = list(filter(lambda entry: airport_router_helper(sourceAirports, entry), airport_features))
     #return geojson.FeatureCollection(airportConnectionList)
     return json.dumps(list(sourceAirports))
