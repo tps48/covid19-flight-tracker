@@ -112,3 +112,7 @@ overflow: auto;
 .connectionTable {
 display: block;
 }
+
+.hidden{
+  display:none;
+}

@@ -1,7 +1,7 @@
 import os
 import json
 import geojson
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 
@@ -16,7 +16,7 @@ from models import State, County, Airport
 
 @app.route('/')
 def index():
-    return render_template('/index.html')
+    return redirect(url_for('map'))
 
 @app.route('/map/')
 def map():
@@ -66,8 +66,8 @@ def cases_at_airport(code):
         abort(404)
 
 @app.route('/airportInfo/<code>/')
-def airport_county(code):
-    #try:
+def airport_info(code):
+    
     airport = db.session.query(Airport).filter(func.lower(str(code)) == func.lower(Airport.code)).first()
     county_name = airport.county.name
     state_name = airport.county.state.name
@@ -76,17 +76,27 @@ def airport_county(code):
     dict = {}
     dict["location"] = location
     dict["cases"] = cases
+    dict["incomingCases"] = incoming_cases(code)
     return dict
-    #except:
-    #abort(404)
+
+def incoming_cases(code):
+    script_dir = os.path.dirname(__file__)
+
+    airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
+    sourceAirports = []
+    airportSet = set()
+    inRoutes = airport.incoming_routes
+    cases = 0
+
+    for row in inRoutes:
+        cases += int(row.source_airport.county.new_cases)
+
+    return str(cases)
+    
 
 @app.route('/outgoingConnections/<airport_name>/')
 def outgoing_router(airport_name):
     script_dir = os.path.dirname(__file__)
-    
-    #with open(script_dir + '/json/airportData.geojson', 'r') as f:
-    #    airport_json = json.load(f)
-    #airport_features = airport_json["features"]
 
     airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
     destinationAirports = []
@@ -101,17 +111,12 @@ def outgoing_router(airport_name):
             destinationAirports.append(dict)
             airportSet.add(dict["code"])
     
-    #airportConnectionList = list(filter(lambda entry: airport_router_helper(destinationAirports, entry), airport_features))
-    #return geojson.FeatureCollection(airportConnectionList)
+    
     return json.dumps(list(destinationAirports))
 
 @app.route('/incomingConnections/<airport_name>/')
 def incoming_router(airport_name):
     script_dir = os.path.dirname(__file__)
-
-    #with open(script_dir + '/json/airportData.geojson', 'r') as f:
-    #    airport_json = json.load(f)
-    #airport_features = airport_json["features"]
 
     airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
     sourceAirports = []
@@ -125,9 +130,22 @@ def incoming_router(airport_name):
         if dict["code"] not in airportSet:
             sourceAirports.append(dict)
             airportSet.add(dict["code"])
-    #airportConnectionList = list(filter(lambda entry: airport_router_helper(sourceAirports, entry), airport_features))
-    #return geojson.FeatureCollection(airportConnectionList)
+
     return json.dumps(list(sourceAirports))
+
+def incoming_cases(airport_name):
+    script_dir = os.path.dirname(__file__)
+
+    airport = db.session.query(Airport).filter(func.lower(str(airport_name)) == func.lower(Airport.code)).first()
+    sourceAirports = []
+    airportSet = set()
+    inRoutes = airport.incoming_routes
+    cases = 0
+
+    for row in inRoutes:
+        cases += int(row.source_airport.county.new_cases)
+
+    return str(cases)
     
 
 def airport_router_helper(airports, airport_entry):

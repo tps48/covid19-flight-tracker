@@ -132,6 +132,8 @@ var currentAirport = "";
       //try fetching JSONS here - use fetch json func from stack
       document.getElementById('connectionTable').innerHTML = ""; 
       var request = new XMLHttpRequest();
+
+      //when we receive the response, this code adds airport info to connections pane
       request.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
           returnedJson = JSON.parse(this.responseText);
@@ -141,6 +143,8 @@ var currentAirport = "";
           content += '<div><strong>Location: ' +location+'</strong></div><br>';
           const cases = returnedJson.cases;
           content += '<div><strong>Cases within past two weeks: ' +cases+'</strong></div>';
+          const incomingCases = returnedJson.incomingCases;
+          content += '<div><strong>Cases at sources of incoming flights: ' +incomingCases+'</strong></div>';
           connectionInfo.innerHTML = content;
         }
       }
@@ -199,6 +203,8 @@ var currentAirport = "";
     }
   });
 
+
+  //function to convert json into an HTML table
   function jsonToTable(json) {
     var cols = Object.keys(json[0]);
     var headerRow = '';
@@ -249,7 +255,8 @@ var currentAirport = "";
   var covidMaxFilter = document.getElementById('maxcases');
   var filterButton = document.getElementById('filter');
 
-  filterButton.addEventListener('click', event => {
+  //filterButton.addEventListener('click', event => {
+  $("#filter").click(function() {
     console.log('filtering...');
     minCases = covidMinFilter.value;
     maxCases = covidMaxFilter.value;
@@ -257,6 +264,7 @@ var currentAirport = "";
       console.log('No filter input');
     }
     else {
+      $("#filter").html('<span class="spinner-border spinner-border-sm" id="spinner" role="status" aria-hidden="true"></span>Loading...');
       map.removeLayer('airports');
       map.removeSource('airports');
       if(minCases.length != 0 && maxCases.length != 0) {
@@ -288,7 +296,24 @@ var currentAirport = "";
           'icon-image': 'custom-marker',
           'icon-allow-overlap': true
         }
-      }); 
+      });
+      console.log(map.getLayer('airports'));
+      setTimeout(function() {
+        $("#filter").html("Filter");
+      }, 5000);
+    }
+  });
+
+
+  //stop loading animation
+  map.on('render', function() {
+    try {
+      if(map.queryRenderedFeatures({layers:['airports']}).length > 0) {
+        $("#filter").html("Filter");
+      }
+    }
+    catch(err) {
+      console.log("error");
     }
   });
 

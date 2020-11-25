@@ -72,21 +72,14 @@
     </div>
     <div class="map-overlay-inner">
       <fieldset>
-        <label>New Cases in Last 2 Weeks</label>
-        <text>State: {{stateCases}}</text>
-        <br>
-        <text>County: {{countyCases}}</text>
-      </fieldset>
-    </div>
-    <div class="map-overlay-inner">
-      <fieldset>
         <label>Filter Airports by COVID cases</label>
         <text>Minimum cases:</text>
         <input type="number" id="mincases">
         <text>Maximum cases:</text>
         <input type="number" id="maxcases">
         <br><br>
-        <button id="filter">Filter</button>
+        <button id="filter">
+        Filter</button>
         <br><br>
         <button id="reset">Reset Map</button>
       </fieldset>
@@ -99,6 +92,7 @@
       <button id="search">Search</button>
     </div>
   </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
   <script src="{{ url_for('static', filename='covidmap.js') }}"></script>
   <script src="{{ url_for('static', filename='main.js') }}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
