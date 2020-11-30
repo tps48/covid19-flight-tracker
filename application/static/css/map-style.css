@@ -105,12 +105,13 @@ p {
 
 .my-custom-scrollbar {
 position: relative;
-height: 500px;
+height: 300px;
 overflow: auto;
 }
 
 .connectionTable {
 display: block;
+padding: 5px;
 }
 
 .hidden{

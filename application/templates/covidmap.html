@@ -16,7 +16,7 @@
   <div class="map-overlay-right top">
     <div class="map-overlay-inner">
       <fieldset>
-         <h1>COVID-19 Airport Tracker</h1>
+         <h1 style="text-align:center">COVID-19 Airport Tracker</h1>
       </fieldset>
     </div>
     <a href="https://github.com/tps48/covid19-flight-tracker" button type="button" class="btn btn-link">GitHub</a></button>
@@ -25,15 +25,20 @@
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Project Description</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle">The COVID-19 Airport Tracker</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <h2>About the project</h2>
-            <p>This is a work-in-progress web-application that tracks coronavirus cases across the commercial airports in the United States.
-            Use the filters along the left to find specific airports and filter them by active cases in their respective regions.</p>
+            <h2>Our Mission</h2>
+            <p><i>An Excerpt from the team's Final Report - Section 1.4:</i> "Our goal with the COVID-19 Flight Tracker is to provide users with a platform where they can make more educated and properly evaluated decisions regarding their choice to fly commercially during the COVID-19 pandemic. Our team understands that this is a time of great uncertainty. With an event as unpresecendant as COVID-19, navigating through tough choices and decision-making can be especially challenging with no prior wisdom or experiences to help guide oneself. Amidst the slew of misinformation regarding COVID-19, constantly shifting state/municipal policies, and general confusion regarding COVID-19 in the United States; our service seeks to mitigate uncertainties and help American citizens make safer and more informed decisions. Our team understands that not every individual has the luxury or privilege to avoid commercial travel entirely, however it is our hope that the COVID-19 Flight Tracker can still help individuals understand the risks and growing concerns surrounding travel to particular airports or counties.</p>
+            
+            <h2>Learn More</h2>
+            <p>We encourage every visitor to our web application to visit the Center for Disease Control's website regarding travel restrictions and safety. For quick access, click our <a href="https://www.cdc.gov/coronavirus/2019-ncov/travelers/index.html">link</a> to stay informed and safe!</p>
+            
+            <h2>Credit</h2>
+            <p>All code and work related to the development and deployment of the COVID-19 Airport Tracker is entirely the result of the combined efforts of Jack Bilotti, David Pietrow, and Tom Stephenson. This work was completed in order to produce the highest quality software system for our senior capstone project at CWRU. We hope you enjoyed checking out all of our hard work!</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -41,14 +46,14 @@
         </div>
       </div>
     </div>
-    <div class="map-overlay-inner" style="margin-top:10px">
+    <div class="map-overlay-inner" style="margin-top:10px;max-height:500px;overflow-y:scroll">
       <div class="text-center">
         <fieldset>
           <h1>Connections</h1>
           <div class="connectionInfo" id="connectionInfo"></div>
         </fieldset>
         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-          <label class="btn btn-secondary active">
+          <label class="btn btn-secondary">
             <input type="radio" name="options" id="optionIn" autocomplete="off"> Incoming
           </label>
           <label class="btn btn-secondary">

@@ -128,9 +128,9 @@ var currentAirport = "";
     //New part for connections
     map.on('click', 'airports', function (e) {
       var feature = e.features[0];
-      var incomingChecked = document.getElementById("optionIn").checked;
+
       //try fetching JSONS here - use fetch json func from stack
-      document.getElementById('connectionTable').innerHTML = ""; 
+      document.getElementById('connectionTable').innerHTML = "<strong> Please select 'Incoming' Or 'Outgoing' to see a list of connections!</strong>"; 
       var request = new XMLHttpRequest();
 
       //when we receive the response, this code adds airport info to connections pane
@@ -138,13 +138,17 @@ var currentAirport = "";
         if (this.readyState == 4 && this.status == 200) {
           returnedJson = JSON.parse(this.responseText);
           console.log(returnedJson)
-          var content = '<div><strong>Current Airport: ' + feature.properties.name.toUpperCase() +'</strong></div><br>';
-          const location = returnedJson.location;
-          content += '<div><strong>Location: ' +location+'</strong></div><br>';
+          
+          var content = '<div>Current Airport: <strong>' + feature.properties.name.toUpperCase() +'</strong><br>';
+          const location = returnedJson.location;        
+          content += 'Location: <strong>' +location+'</strong><br>';
+          
           const cases = returnedJson.cases;
-          content += '<div><strong>Cases within past two weeks: ' +cases+'</strong></div>';
+          content += 'Cases within past two weeks: <strong>' +cases+'</strong><br>';
+
           const incomingCases = returnedJson.incomingCases;
-          content += '<div><strong>Cases at sources of incoming flights: ' +incomingCases+'</strong></div>';
+          content += 'Cases at sources of incoming flights: <strong>' +incomingCases+'</strong></div>';
+
           connectionInfo.innerHTML = content;
         }
       }
@@ -154,7 +158,7 @@ var currentAirport = "";
       console.log(currentAirport);
     });
 
-    map.on('move', empty);
+   
   
   }); //map.on('load')
 
